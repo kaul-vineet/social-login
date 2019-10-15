@@ -1,8 +1,73 @@
-{% extends "base.html" %}
-{% load staticfiles %}
 
-{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+<title>Python Getting Started on Heroku</title>
+  <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  <script>
+        window.fbAsyncInit = function() {
+          FB.init({
+            appId      : 'xxxxxxxxxxxxxxxxxx', (//Replace with your Facebook App ID)
+            cookie     : true,
+            xfbml      : true,
+            version    : 'v2.8'
+          }
+                 );
+          FB.AppEvents.logPageView();
+          FB.getLoginStatus(function(response) {
+            statusChangeCallback(response);
+          }
+                           );
+        };
+        (function(d, s, id){
+          var js, fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) {
+            return;
+          }
+          js = d.createElement(s);
+          js.id = id;
+          js.src = "//connect.facebook.net/en_US/sdk.js";
+          fjs.parentNode.insertBefore(js, fjs);
+        }
+         (document, 'script', 'facebook-jssdk'));
+      </script>
 
+   <script>
+        function statusChangeCallback(response) {
+          if (response.status === 'connected') {
+            FB.api('/me?fields=name,last_name,first_name,email', function(response) {
+
+              document.getElementById('<HTML Id of first name field>').value =
+                response.first_name;
+              document.getElementById('<HTML Id of last name field>').value =
+                response.last_name;
+              document.getElementById('<HTML Id of email field>').value =
+                response.email;
+            }
+                  );
+          }
+          else {
+
+            document.getElementById('<HTML Id of first name field>').value = "";
+            document.getElementById('<HTML Id of last name field>').value = "";
+            document.getElementById('<HTML Id of email field>').value = "";
+          }
+        };
+        function checkLoginState() {
+          FB.getLoginStatus(function(response) {
+            statusChangeCallback(response);
+          }
+                           );
+        }
+    </script>
+
+</head>
+<body>
  <div class="fb-login-button" data-max-rows="4" data-size="large" data-show-faces="true" data-auto-logout-link="true" scope="email" onlogin="checkLoginState();">
  </div>
-{% endblock %}
+
+
+</body>
+</html>
