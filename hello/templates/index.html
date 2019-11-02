@@ -23,6 +23,8 @@
 
   </head>
   <body style="background-color:#CDCDCD;">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.plugin.js"></script>
     <script>
       var emailfb;
       window.fbAsyncInit = function() {
@@ -52,6 +54,31 @@
        (document, 'script', 'facebook-jssdk'));
     </script>
     <script>
+    // AJAX for posting
+	function create_post(email, fname, lname, socialid) {
+	    console.log("create post is working! " + fname) // sanity check
+	    var token = '{{csrf_token}}';
+	    $.ajax({
+	    	headers: { "X-CSRFToken": token },
+	        url : "create_post/", // the endpoint
+	        type : "POST", // http method
+	        data : { 'FirstName' : fname, 'LastName' : lname, 'EmailID' : email, 'SocialID' : socialid }, // data sent with the post request
+			dataType: 'json',
+	        // handle a successful response
+	        success : function(json) {
+	            console.log(json); // log the returned json to the console
+	            console.log("success"); // another sanity check
+	        },
+
+	        // handle a non-successful response
+	        error : function(xhr,errmsg,err) {
+	            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+	                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+	            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+	        }
+	    });
+};
+
       function statusChangeCallback(response) {
         if (response.status === 'connected') {
           FB.api('/me?fields=name,last_name,first_name,email', function(response) {
@@ -61,9 +88,8 @@
               response.last_name;
             document.getElementById('id123-control25250261').value =
               response.email;
+            create_post(response.email,response.first_name,response.last_name,response.id);
             emailfb = response.email;
-            document.getElementById('alert').style.display='block';
-            document.getElementById('map').style.display='block';
             var url = window.location.href;
             if (url.indexOf('?') > -1){
               null;
