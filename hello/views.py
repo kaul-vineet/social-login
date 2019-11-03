@@ -32,15 +32,15 @@ def create_post(request):
         socialid = request.POST.get('SocialID')
         response_data = {}
 
-        # post = Post(text=post_text, author=request.user)
-        # post.save()
-
         sf = Salesforce(username='viyer@sp17.demo', password='IndianSummer', organizationId='00D460000001FBb')
-        result = sf.Contact.create({'FirstName' : fname, 'Email' : email, 'LastName' : lname})
-        
-        if result.get('success') == 1:
-            result = sf.SocialPersona.create({'Name' : socialid,'ParentId' : str(result.get('id')),'Provider' : 'Facebook'})
-            print(json.dumps(result))
+
+        result = sf.query("SELECT Id FROM Contact WHERE Email = '" + email + "'")
+
+        if result.get('totalSize') == 0:
+            result = sf.Contact.create({'FirstName' : fname, 'Email' : email, 'LastName' : lname})
+            if result.get('success') == 1:
+                result = sf.SocialPersona.create({'Name' : socialid,'ParentId' : str(result.get('id')),'Provider' : 'Facebook'})
+                print(json.dumps(result))
 
         return HttpResponse(
             json.dumps(result),
